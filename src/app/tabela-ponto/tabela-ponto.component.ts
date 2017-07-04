@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Ponto } from './ponto';
+import { TabelaPontoService } from './tabela-ponto.service'
+
 @Component({
   selector: 'app-tabela-ponto',
   templateUrl: './tabela-ponto.component.html',
@@ -8,9 +10,11 @@ import { Ponto } from './ponto';
 export class TabelaPontoComponent implements OnInit {
 
   teste: string;
-  constructor() {
+  constructor(private _pontoService: TabelaPontoService) {
     this.teste = 'abc';
+
   }
+
   pontoTeste: Ponto = new Ponto();
   pontosDoMes: Ponto[];
   mesesDoAno: string[];
@@ -26,6 +30,10 @@ export class TabelaPontoComponent implements OnInit {
     this.mesesDoAno = this.populaMesesDoAno();
     this.anos = this.populaArrayAno();
     this.carregarPontosDoMes(new Date);
+    
+    
+    this._pontoService.getService();
+
   }
 
  

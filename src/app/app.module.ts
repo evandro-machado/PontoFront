@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -8,6 +9,8 @@ import { TabelaPontoComponent } from './tabela-ponto/tabela-ponto.component';
 import { FormsModule }   from '@angular/forms';
 import { ListaMesesComponent } from './lista-meses/lista-meses.component';
 import { RouterModule, Routes } from '@angular/router';
+
+import { TabelaPontoService } from './tabela-ponto/tabela-ponto.service';
 
 const appRoutes: Routes = [
   { path: 'tabela-ponto', component: TabelaPontoComponent },
@@ -29,9 +32,10 @@ const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     NgbModule.forRoot(),
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    HttpModule
   ],
-  providers: [],
+  providers: [TabelaPontoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
