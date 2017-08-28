@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Ponto } from './ponto';
+import { Usuario } from '../usuario/usuario';
 import { TabelaPontoService } from './tabela-ponto.service'
 
 @Component({
@@ -10,10 +11,7 @@ import { TabelaPontoService } from './tabela-ponto.service'
 export class TabelaPontoComponent implements OnInit {
 
   teste: string;
-  constructor(private _pontoService: TabelaPontoService) {
-    this.teste = 'abc';
-
-  }
+  constructor(private _pontoService: TabelaPontoService) {  }
 
   pontoTeste: Ponto = new Ponto();
   pontosDoMes: Ponto[];
@@ -30,24 +28,33 @@ export class TabelaPontoComponent implements OnInit {
     this.mesesDoAno = this.populaMesesDoAno();
     this.anos = this.populaArrayAno();
     this.carregarPontosDoMes(new Date);
-    
-    
-    this._pontoService.getService();
-
   }
 
  
 
   carregarPontosDoMes(dataSelecionada) {
-    var lastDay = new Date(dataSelecionada.getFullYear(), dataSelecionada.getMonth() + 1, 0);
+
     this.pontosDoMes = new Array();
     this.nomeDoMesCorrente = dataSelecionada.toLocaleString('pt-br', { month: 'long' });
     this.mesCorrente = this.mesesDoAno.indexOf(this.nomeDoMesCorrente);
     this.anoCorrente = dataSelecionada.getFullYear();
-    for (var i = 1; i <= lastDay.getDate(); i++) {
-      var ponto = this.criarPontoPadrao(dataSelecionada, i);
-      this.pontosDoMes.push(ponto);
-    }
+    let usuario:Usuario = JSON.parse(localStorage.getItem('currentUser'));
+    return new Promise((resolve, reject)=> {
+      this._pontoService.buscarPontos(
+        {"idUsuario": usuario._id, 
+         "mes": this.mesCorrente + 1,
+         "ano": this.anoCorrente}).subscribe(
+          pontos => {
+            for(var i = 0 ; i < pontos.length ; i++){
+              pontos[i].data = new Date(pontos[i].ano, (pontos[i].mes - 1), pontos[i].dia);
+              pontos[i].diaDaSemana = pontos[i].data.toLocaleString('pt-br', { weekday: 'long' });
+              pontos[i].diaDaSemana = pontos[i].diaDaSemana.charAt(0).toUpperCase() + pontos[i].diaDaSemana.slice(1);
+            }
+            pontos.sort(function(a,b) {return (a.data > b.data) ? 1 : ((b.data > a.data) ? -1 : 0);} ); 
+            this.pontosDoMes = pontos;
+          }
+        );
+    });
   }
 
   criarPontoPadrao(dataSelecionada, diaDoMes){
@@ -56,10 +63,10 @@ export class TabelaPontoComponent implements OnInit {
       ponto.data.setDate(diaDoMes);
       ponto.diaDaSemana = ponto.data.toLocaleString('pt-br', { weekday: 'long' });
       ponto.diaDaSemana = ponto.diaDaSemana.charAt(0).toUpperCase() + ponto.diaDaSemana.slice(1);
-      ponto.entrada = "08:00";
-      ponto.saida = "18:00";
-      ponto.inicioDoAlmoco = "12:00";
-      ponto.fimDoAlmoco = "13:00";
+      ponto.horaEntrada = "08:00";
+      ponto.horaSaida = "18:00";
+      ponto.horaSaidaAlmoco = "12:00";
+      ponto.horaVoltaAlmoco = "13:00";
       ponto.total = "08:00";
       return ponto;
   }
@@ -110,13 +117,18 @@ export class TabelaPontoComponent implements OnInit {
     }
     if (/^([01]\d|2[0-3]):([0-5]\d)$/.test(hora)) {
       this.pontosDoMes[index][propriedade] = hora;
-      console.log("Válido");
+      this.alterarPontoDoMes(this.pontosDoMes[index]);
     }
     else {
       alert("Inválido");
     }
   }
 
+  alterarPontoDoMes(ponto:Ponto){
+    var request = {ponto: ponto, usuario: {_id: "596ce468798b61179c6442bb"}};
+    this._pontoService.alterarPonto(request).subscribe();
+    console.log(request);
+  }
 
   replaceBadInputs(val) {
     // Replace impossible inputs as they appear
@@ -136,6 +148,9 @@ export class TabelaPontoComponent implements OnInit {
   // Apply input rules as the user types or pastes input
   mascaraHora(event, hora, propriedade, index) {
     var val = hora;
+    if (val.length == 1 &&  /^[3-9]+$/.test(val)){
+      val = "0" + val + ":";
+    }
     var lastLength;
     if (hora.length == 2 && event.keyCode != 8) {
       val = val + ":";
@@ -148,7 +163,8 @@ export class TabelaPontoComponent implements OnInit {
     this.pontosDoMes[index][propriedade] = val;
   };
 
-  verificaFimDeSemana(diaDaSemanaNumero) {
+  verificaFimDeSemana(data) {
+    var diaDaSemanaNumero = data.getDay();
     if (diaDaSemanaNumero == 0 || diaDaSemanaNumero == 6) {
       return true;
     } else {

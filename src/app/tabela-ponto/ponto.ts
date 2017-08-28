@@ -1,9 +1,13 @@
 export class Ponto{
+    _id: String;
     data: Date;
-    entrada: String;
-    saida: String;
-    inicioDoAlmoco: String;
-    fimDoAlmoco: String;
+    dia: number;
+	mes: number;
+	ano: number;
+    horaEntrada: String;
+    horaSaida: String;
+    horaSaidaAlmoco: String;
+    horaVoltaAlmoco: String;
     total: String;
     diaDaSemana: String;
 }

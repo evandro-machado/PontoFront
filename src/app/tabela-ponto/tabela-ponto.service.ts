@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers } from "@angular/http";
+import { Ponto } from "./ponto";
 import { Observable } from 'rxjs/Observable';
 
 // Observable class extensions
@@ -19,39 +20,25 @@ import 'rxjs/add/operator/switchMap';
 @Injectable()
 export class TabelaPontoService {
 
-    // headers: Headers;
-    // options: RequestOptions;
-
     constructor(private http: Http) {
-        // this.headers = new Headers({
-        //     'Content-Type': 'application/json',
-        //     'Accept': 'q=0.8;application/json;q=0.9'
-        // });
-        // this.options = new RequestOptions({ headers: this.headers });
     }
 
-    // getService(url: string): Observable<any> {
-    getService(): Observable<any> {
 
-          return this.http.get("http://localhost:8080/pontos/oi")
-            .map(response => console.log(response.json().contents))
-            .catch((err: Response|any)=>{
-                return Observable.throw(err.statusText);
-          });
-        // return this.http.get("http://localhost:8080/pontos/oi", this.options)
-        //     .map(this.extractData)
-        //     .catch(this.handleError);
+
+    buscarPontos(pontosVO: Object): Observable<Ponto[]> {
+        let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Authorization', "Bearer " + currentUser.token);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post("http://localhost:8080/pontos", JSON.parse(JSON.stringify(pontosVO)), options)
+            .map(response => response.json())
+            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }
 
-    // private extractData(res: Response) {
-    //     let body = res.json();
-    //     return body || {};
-    // }
-
-    // private handleError(error: any) {
-    //     let errMsg = (error.message) ? error.message :
-    //         error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-    //     console.error(errMsg);
-    //     return Observable.throw(errMsg);
-    // }
+    alterarPonto(alterarPontoVo: Object): Observable<any> {
+        return this.http.put("http://localhost:8080/pontos", alterarPontoVo)
+            .map(response => response.json())
+            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    }
 }

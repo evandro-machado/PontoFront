@@ -1,4 +1,12 @@
 <div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10">
+      <div class="float-right">
+        <a routerLink="/login">Logout</a>
+      </div>
+    </div>
+
+  </div>
   <h2 style="text-align:center">{{nomeDoMesCorrente}} de {{anoCorrente}}</h2>
   <div class="row">
     <div class="offset-md-3 col-md-2">
@@ -35,37 +43,36 @@
           <td style="font-size: 0.9rem;">{{ponto.diaDaSemana}}</td>
           <td>
             <div class="input-group input-group-sm">
-              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data.getDay())" [(ngModel)]="ponto.entrada"
-                (keyup)="mascaraHora($event, ponto.entrada, 'entrada', i)" (blur)="validaInput($event, ponto.entrada, 'entrada', i)"
+              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data)" [(ngModel)]="ponto.horaEntrada" (keyup)="mascaraHora($event, ponto.horaEntrada, 'horaEntrada', i)"
+                (blur)="validaInput($event, ponto.horaEntrada, 'horaEntrada', i)" />
+            </div>
+          </td>
+          <td>
+            <div class="input-group input-group-sm">
+              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data)" [(ngModel)]="ponto.horaSaidaAlmoco"
+                (keyup)="mascaraHora($event, ponto.horaSaidaAlmoco, 'horaSaidaAlmoco', i)" (blur)="validaInput($event, ponto.horaSaidaAlmoco, 'horaSaidaAlmoco',  i)"
               />
             </div>
           </td>
           <td>
             <div class="input-group input-group-sm">
-              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data.getDay())" [(ngModel)]="ponto.inicioDoAlmoco"
-                (keyup)="mascaraHora($event, ponto.inicioDoAlmoco, 'inicioDoAlmoco', i)" (blur)="validaInput($event, ponto.inicioDoAlmoco, 'inicioDoAlmoco',  i)"
+              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data)" [(ngModel)]="ponto.horaVoltaAlmoco"
+                (keyup)="mascaraHora($event, ponto.horaVoltaAlmoco, 'horaVoltaAlmoco', i)" (blur)="validaInput($event, ponto.horaVoltaAlmoco, 'horaVoltaAlmoco', i)"
               />
             </div>
           </td>
           <td>
             <div class="input-group input-group-sm">
-              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data.getDay())" [(ngModel)]="ponto.fimDoAlmoco"
-                (keyup)="mascaraHora($event, ponto.fimDoAlmoco, 'fimDoAlmoco', i)" (blur)="validaInput($event, ponto.fimDoAlmoco, 'fimDoAlmoco', i)"
-              />
+              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data)" [(ngModel)]="ponto.horaSaida" (keyup)="mascaraHora($event, ponto.horaSaida, 'horaSaida', i)"
+                (blur)="validaInput($event, ponto.horaSaida, 'horaSaida', i)" />
             </div>
           </td>
           <td>
             <div class="input-group input-group-sm">
-              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data.getDay())" [(ngModel)]="ponto.saida"
-                (keyup)="mascaraHora($event, ponto.saida, 'saida', i)" (blur)="validaInput($event, ponto.saida, 'saida', i)"
+              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data)" [(ngModel)]="ponto.total" disabled="disabled"
               />
             </div>
           </td>
-          <td>
-            <div class="input-group input-group-sm">
-              <input class="form-control" maxlength="5" [disabled]="verificaFimDeSemana(ponto.data.getDay())" [(ngModel)]="ponto.total"
-                disabled="disabled" />
-            </div>
         </tr>
       </table>
     </div>
